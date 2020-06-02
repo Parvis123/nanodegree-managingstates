@@ -17,30 +17,37 @@ class App extends Component {
     };
   }
 
+  randomNumber = () => Math.floor(Math.random() * 100);
+
   newQuestion = () =>{
-      const value1 = Math.floor(Math.random() * 100);
-      const value2 = Math.floor(Math.random() * 100);
-      const value3 = Math.floor(Math.random() * 100);
+      const value1 = this.randomNumber();
+      const value2 = this.randomNumber();
+      const value3 = this.randomNumber();
       const proposedAnswer = Math.floor(Math.random() * 3) + value1 + value2 + value3;
-      return [value1, value2, value3, proposedAnswer];
+      return [value1, value2, value3, proposedAnswer]
   };
 
-  updateStateForNextQuestion = newQuestionArray => {
-    this.setState( () => ({
+  updateStateForNextQuestion = () => {
+
+    const newQuestionArray = this.newQuestion();
+    this.setState({
       value1:newQuestionArray[0],
       value2:newQuestionArray[1],
       value3:newQuestionArray[2],
       proposedAnswer:newQuestionArray[3],
-    }))
+    })
   }
 
-  handleAnswer = () => {
+  handleAnswer = (answer) => {
   const { correctAnswer, noQuestions, proposedAnswer, value1, value2, value3} = this.state;
-    if (proposedAnswer === value1+value2+value3) {
+    if ((proposedAnswer === value1+value2+value3) === answer) {
       this.setState({correctAnswer: correctAnswer + 1});
     }
       this.setState({noQuestions: noQuestions + 1});
+
+      this.updateStateForNextQuestion();
   }
+
   render() {
     const { value1, value2, value3, proposedAnswer } = this.state;
     return (
@@ -54,8 +61,8 @@ class App extends Component {
           <div className="equation">
             <p className="text">{`${value1} + ${value2} + ${value3} = ${proposedAnswer}`}</p>
           </div>
-          <button onClick={this.handleAnswer}>True</button>
-          <button onClick={this.handleAnswer}>False</button>
+          <button onClick={() => this.handleAnswer(true)} >True</button>
+          <button onClick={() => this.handleAnswer(false)}>False</button>
           <p className="text">
             Your Score: {this.state.correctAnswer}/{this.state.noQuestions}
           </p>
